@@ -15,4 +15,4 @@ jdk:
 
 script:
   mvn clean initialize -B
-  mvn clean install -B
+  mvn package -B
