@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guard OIDC Adapter Proxy</title>
+    <meta name="author" content="Kad D. <kadary.dembele@com.com>">
+    <script type="application/javascript">
+        function getParameterByName(name) {
+            var match = RegExp('[#&]' + name + '=([^&]*)').exec(window.location.hash);
+            return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+        }
+
+        function getState() {
+            return getParameterByName('state');
+        }
+
+        function getError() {
+            return getParameterByName('error');
+        }
+
+        function getIdToken() {
+            return getParameterByName('id_token');
+        }
+
+        function getAdapterId() {
+            if (!isNull(decodeURIComponent(window.location.href).split("\?id=")[1])) {
+                return decodeURIComponent(decodeURIComponent(window.location.href.split("\?id=")[1]).split("#")[0]);
+            }
+            else {
+                return null;
+            }
+        }
+
+        function getHostname() {
+            return window.location.protocol + "//" + window.location.host
+        }
+
+        function isNull(object) {
+            return object === null || object === undefined || object === "";
+        }
+        
+        function getRequest() {
+            var request = new XMLHttpRequest();
+            request.open("POST", getHostname() + "/auth/oidc-adapter");
+            request.setRequestHeader("content-type", "application/x-www-form-urlencoded");
+            request.setRequestHeader("accept", "application/json");
+            request.setRequestHeader("cache-control", "no-cache");
+            request.withCredentials = true;
+            return request;
+            
+        }
+        if (!isNull(getAdapterId()) && !isNull(getIdToken()) && !isNull(getState())) {
+            var request = getRequest();
+            request.send(
+                "id_token=" + encodeURIComponent(getIdToken())
+                + "&state=" + encodeURIComponent(getState())
+                + "&adapter_id=" + encodeURIComponent(getAdapterId())
+            );
+
+            request.onload = function () {
+                if (request.status === 200) {
+                    window.location.replace(JSON.parse(request.responseText)["original_url"]);
+                }
+                else {
+                    window.location.replace(getHostname());
+                }
+            };
+            request.onerror = function () {
+                window.location.replace(getHostname())
+            };
+        }
+        else if (!isNull(getAdapterId()) && !isNull(getError()) && !isNull(getState())) {
+            var request = getRequest();
+            request.send(
+                "error=" + encodeURIComponent(getError())
+                + "&adapter_id=" + encodeURIComponent(getAdapterId())
+                + "&state=" + encodeURIComponent(getState())
+            );
+
+            request.onload = function () {
+                if (request.status === 200) {
+                    window.location.replace(JSON.parse(request.responseText)["original_url"]);
+                }
+                else {
+                    window.location.replace(getHostname());
+                }
+            };
+            request.onerror = function () {
+                window.location.replace(getHostname())
+            };
+        }
+        else {
+            window.location.replace(getHostname())
+        }
+    </script>
+</head>
+<body>
+
+</body>
+</html>

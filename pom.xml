@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.demkada</groupId>
+    <artifactId>guard</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <modules>
+        <module>guard-frontend</module>
+        <module>guard-server</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <build.encoding>UTF-8</build.encoding>
+        <junit.version>4.12</junit.version>
+        <vertx.version>3.6.2</vertx.version>
+        <jose.version>6.0.2</jose.version>
+        <achilles.version>6.0.0</achilles.version>
+        <datastax.driver.version>3.5.0</datastax.driver.version>
+        <log4j.version>2.8.2</log4j.version>
+        <slf4j.version>1.7.25</slf4j.version>
+    </properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/demkada/guard.git</connection>
+        <developerConnection>scm:git:https://github.com/demkada/guard.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/demkada/guard.git</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.19.1</version>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*Test.java</exclude>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>se.bjurr.gitchangelog</groupId>
+                <artifactId>git-changelog-maven-plugin</artifactId>
+                <version>1.54</version>
+                <executions>
+                    <execution>
+                        <id>GenerateGitChangelog</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>git-changelog</goal>
+                        </goals>
+                        <configuration>
+                            <templateContent>
+                                <![CDATA[
+# Guard changelog
+
+{{#tags}}
+## {{name}}
+ {{#issues}}
+  {{#hasIssue}}
+   {{#hasLink}}
+### {{name}} [{{issue}}]({{link}}) {{title}} {{#hasIssueType}} *{{issueType}}* {{/hasIssueType}} {{#hasLabels}} {{#labels}} *{{.}}* {{/labels}} {{/hasLabels}}
+   {{/hasLink}}
+   {{^hasLink}}
+### {{name}} {{issue}} {{title}} {{#hasIssueType}} *{{issueType}}* {{/hasIssueType}} {{#hasLabels}} {{#labels}} *{{.}}* {{/labels}} {{/hasLabels}}
+   {{/hasLink}}
+  {{/hasIssue}}
+  {{^hasIssue}}
+### {{name}}
+  {{/hasIssue}}
+
+  {{#commits}}
+**{{{messageTitle}}}**
+
+{{#messageBodyItems}}
+ * {{.}}
+{{/messageBodyItems}}
+
+[{{hash}}](https://github.com/{{ownerName}}/{{repoName}}/commit/{{hash}}) {{authorName}} *{{commitTime}}*
+
+  {{/commits}}
+
+ {{/issues}}
+{{/tags}}
+         ]]>
+                            </templateContent>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.7.0</version>
+                    <configuration>
+                        <showWarnings>true</showWarnings>
+                        <showDeprecation>true</showDeprecation>
+                        <encoding>${build.encoding}</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>

@@ -1,0 +1,463 @@
+swagger: "2.0"
+info:
+  description: |
+      This document describes the Authentication and Authorization API, which is meant to be used by third party servers and client to perform OpenID Connect Authentication and OAuth2 authorizationn, introspection and revocation.
+      # Introduction
+      Our authentication service let you retrieve tokens for requesting resources hosted on our servers. These resources includes and is not limited to: enduser informations, grants to access other business or utilites services from your own app.
+        This standards are implemented in our authentication service:
+        -   [OAuth 2.0 Framework](https://tools.ietf.org/html/rfc6749)
+        -   [OAuth 2.0 Token Introspection](https://tools.ietf.org/html/rfc7662)
+        -   [OAuth 2.0 Token Revocation](https://tools.ietf.org/html/rfc7009)
+        -   [OAuth 2.0 Mutual TLS](https://tools.ietf.org/id/draft-ietf-oauth-mtls-12.html)
+        -   [OpenID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html)
+        -   [OpenID Connect Dicovery](https://openid.net/specs/openid-connect-discovery-1_0.html)
+
+      # Cross-Origin Resource Sharing
+      This APIs does not allow any Cross-Origin Resource Sharing (CORS) requets appart from **/oauth2/userinfo** endpoints as pecified by [OpenId Connect Core Spec](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo).
+      # Authentication
+      Use of our authentication API require some identification:
+        - **Basic** Authentication
+        - **mTLS** - Mutual authentication or two-way authentication is some times require in addition to Basic authentication for some specific acces scopes (eg. PSD2 scopes)
+        - **OAuth2** - For **/oauth2/userinfo** endpoint only
+
+      <!-- ReDoc-Inject: <security-definitions> -->
+  version: "${project.version}"
+  title: "Authentication API"
+basePath: "/"
+tags:
+  - name: "OAuth2/OIDC"
+    description: |
+      OAuth2 - an open protocol to allow secure authorization in a simple
+      and standard method from web, mobile and desktop applications.
+      Our OAuth2 servers are also [OpenID Connect](https://openid.net/) compliant.
+    externalDocs:
+      description: "Find out more"
+      url: "https://tools.ietf.org/html/rfc6749"
+schemes:
+- "https"
+paths:
+  /.well-known/openid-configuration:
+    get:
+      tags:
+      - OAuth2/OIDC
+      operationId: "/.well-known/openid-configuration"
+      description: |-
+        This endpoint allow to get the OIDC server configuration as describe by OIDC discovery spec
+      responses:
+        200:
+          description: A JSON object representing server configuration.
+      produces:
+      - "application/json"
+      x-code-samples:
+        - lang: Http
+          source: GET /.well-known/openid-configuration
+        - lang: Shell
+          source: |
+            curl --request GET \
+              --url 'https://SERVER.well-known/openid-configuration' \
+              --header 'accept: application/json'
+
+  /oauth2/authorize:
+    get:
+      tags:
+      - OAuth2/OIDC
+      operationId: "/oauth2/authorize"
+      description: |-
+        This endpoint allow to request OAuth2 access code or token.
+        Or an OpenID Connect id token
+      parameters:
+      - name: response_type
+        in: query
+        description: request an authorization code or or access token (implicit)
+        required: true
+        type: string
+        enum:
+        - code
+        - token
+        - id_token
+      - name: client_id
+        in: query
+        description: Application client ID
+        required: true
+        type: string
+      - name: scope
+        in: query
+        description: RECOMMENDED. Access Scope being requested
+        type: string
+        required: false
+      - name: redirect_uri
+        in: query
+        type: string
+        description: RECOMMENDED. URI where user is redirected to after authorization.  If left out, the authentication server will redirect users to the redirect_uri configured in the OAuth2 client settings (**if there is only one configured URL of course**)
+        required: false
+      - name: state
+        in: query
+        type: string
+        description: RECOMMENDED. This string will be echoed back to application when user is redirected
+        required: false
+      - name: nonce
+        type: string
+        required: false
+        in: query
+        description: MANDATORY for openid scope and id_token response type
+      responses:
+        200:
+          description: An HTML form for authentication or authorization of this request.
+        302:
+          description: |
+            Redirect to the clients redirect_uri containing one of the following
+            - **authorization code** for Authorization code grant
+            - **access token** for Implicity grant
+            - **error** in case of errors, such as the user has denied the request
+      produces:
+      - text/html
+      x-code-samples:
+        - lang: Http
+          source: GET /oauth2/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=https://YOUR_APP/callback&scope=openid&response_type=code
+        - lang: Java
+          source: |
+            // OkHttpClient from http://square.github.io/okhttp/
+
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+              .url("https://SERVER/oauth2/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=https://YOUR_APP/callback&scope=openid&response_type=code")
+              .get()
+              .addHeader("accept", "text/html")
+              .build();
+
+            Response response = client.newCall(request).execute();
+        - lang: Shell
+          source: |
+            curl --request GET \
+              --url 'https://SERVER/oauth2/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=https://YOUR_APP/callback&scope=openid&response_type=code' \
+              --header 'accept: text/html'
+
+  /oauth2/token:
+    post:
+      tags:
+        - OAuth2/OIDC
+      operationId: "/oauth2/token"
+      description: |-
+        This endpoint allows requesting an access token following one of the grant below:
+        - authorization_code (exchange code for access token)
+        - refresh_token (exchange refresh token for a new access token and refresh token)
+        - client_credentials (Request an access token wiyh client credentials flow)
+
+
+        The table below indicates the required parameters for each specific grant_type options.
+        Empty cells indicate a parameter is ignored for that specific grant type.
+
+
+        |                 | authorization_code      | refresh_token | client_credentials |
+        |-----------------|-------------------------|---------------|--------------------|
+        | grant_type      | required                | required      | required           |
+        | code            | required                |               |                    |
+        | redirect_uri    | required                |               |                    |
+        | refresh_token   |                         | required      |                    |
+        | scope           |                         | recommended   |   recommended      |
+
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Token request parameters"
+        required: true
+        schema:
+          $ref: "#/definitions/token_request_payload"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+                description: The access token povided to you.
+              token_type:
+                type: string
+                description: Access token type.
+              expires_in:
+                type: integer
+                description: the duration of time the access token is granted for in seconds.
+              refresh_token:
+                type: string
+                description: The refresh token.
+        401:
+          description: "Invalid credentials"
+        400:
+          description: "Error Response"
+        500:
+          description: "Server Error"
+
+      security:
+      - BasicAuth: []
+      x-code-samples:
+        - lang: Java
+          source: |
+           // OkHttpClient from http://square.github.io/okhttp/
+
+           OkHttpClient client = new OkHttpClient();
+
+           MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+           RequestBody body = RequestBody.create(mediaType, "grant_type=authorization_code&code=cacafs&redirect_uri=https://YOUR_APP/callback");
+           Request request = new Request.Builder()
+             .url("https://SERVER/oauth2/token")
+             .post(body)
+             .addHeader("Authorization", "Basic nbvcxwqsdfghjklmpoiuytreza")
+             .addHeader("content-type", "application/x-www-form-urlencoded")
+             .addHeader("accept", "application/json")
+             .build();
+
+           Response response = client.newCall(request).execute()
+
+  /oauth2/introspect:
+    post:
+      tags:
+      - OAuth2/OIDC
+      operationId: "/oauth2/introspect"
+      description: |-
+        This endpoint return informations and claims backed by an access_token
+
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Token request parameters"
+        required: true
+        schema:
+          $ref: "#/definitions/introspection_payload"
+      responses:
+        200:
+          description: "Successful Response"
+          schema:
+            type: object
+            properties:
+              active:
+                type: boolean
+                description: tell is the token is valid or not.
+              client_id:
+                type: string
+                description: The client for wich the token is provided.
+              expires_in:
+                type: integer
+                description: the duration of time the access token is granted for in seconds.
+              username:
+                type: string
+                description: The enduser on whom behalf the token is provided.
+              sub:
+                type: string
+                description: The token subject.
+              aud:
+                type: string
+                description: Access token audience.
+              iss:
+                type: string
+                description: Access toen issuer (our organisation).
+              exp:
+                type: integer
+                description: The duration of time the access token is granted for.
+              iat:
+                type: integer
+                description: The token generation time.
+        401:
+          description: "Invalid credentials"
+        400:
+          description: "Error Response"
+        500:
+          description: "Server Error"
+
+      security:
+      - BasicAuth: []
+      x-code-samples:
+        - lang: Java
+          source: |
+           // OkHttpClient from http://square.github.io/okhttp/
+
+           OkHttpClient client = new OkHttpClient();
+
+           MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+           RequestBody body = RequestBody.create(mediaType, "token=5e03afc94c52f5d38a15b96f9591626237131b7668cc94bd85bfa73682abd367&token_type_hint=access_token");
+           Request request = new Request.Builder()
+             .url("https://SERVER/oauth2/introspect")
+             .post(body)
+             .addHeader("Authorization", "Basic nbvcxwqsdfghjklmpoiuytreza")
+             .addHeader("content-type", "application/x-www-form-urlencoded")
+             .addHeader("accept", "application/json")
+             .build();
+
+           Response response = client.newCall(request).execute();
+
+  /oauth2/revoke:
+    post:
+      tags:
+      - OAuth2/OIDC
+      operationId: "/oauth2/revoke"
+      description: |-
+        This endpoint invalidate a refres token
+
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Token request parameters"
+        required: true
+        schema:
+          $ref: "#/definitions/revocation_payload"
+      responses:
+        200:
+          description: "Successful Response"
+        401:
+          description: "Invalid credentials"
+        400:
+          description: "Error Response"
+        500:
+          description: "Server Error"
+
+      security:
+      - BasicAuth: []
+      x-code-samples:
+        - lang: Java
+          source: |
+           // OkHttpClient from http://square.github.io/okhttp/
+
+           OkHttpClient client = new OkHttpClient();
+
+           MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+           RequestBody body = RequestBody.create(mediaType, "token=5e03afc94c52f5d38a15b96f9591626237131b7668cc94bd85bfa73682abd367&token_type_hint=refresh_token");
+           Request request = new Request.Builder()
+             .url("https://SERVER/oauth2/revoke")
+             .post(body)
+             .addHeader("Authorization", "Basic nbvcxwqsdfghjklmpoiuytreza")
+             .addHeader("content-type", "application/x-www-form-urlencoded")
+             .addHeader("accept", "application/json")
+             .build();
+
+           Response response = client.newCall(request).execute();
+
+  /oauth2/jwks.json:
+    get:
+      tags:
+      - OAuth2/OIDC
+      operationId: "/oauth2/jwks.json"
+      description: |-
+        This endpoint allow to get server public keys in JSON Web Key Set format
+      responses:
+        200:
+          description: A JSON object representing key set.
+      produces:
+      - "application/json"
+      x-code-samples:
+        - lang: Http
+          source: GET /oauth2/jwks.json
+        - lang: Shell
+          source: |
+            curl --request GET \
+              --url 'https://SERVER/.well-known/openid-configuration' \
+              --header 'accept: application/json'
+
+  /oauth2/userinfo:
+    get:
+      tags:
+      - OAuth2/OIDC
+      operationId: "/oauth2/userinfo"
+      description: |-
+        This endpoint allow to get enduser informations backed by an access_token provided for **openid** scope
+      responses:
+        200:
+          description: A JSON object representing enduser informations.
+      produces:
+      - "application/json"
+      x-code-samples:
+        - lang: Http
+          source: GET /oauth2/userinfo
+        - lang: Shell
+          source: |
+            curl --request GET \
+              --url 'https://SERVER/oauth2/userinfo' \
+              --header 'Authorization: Bearer nbvcxwqsdfghjklmpoiuytreza'
+      security:
+      - OAuth2: [openid]
+
+securityDefinitions:
+  BasicAuth:
+    type: basic
+    description: |
+      The HTTP Basic authentication scheme is required for all authentication API except for **GET methods**.
+      You should simply include an Authorization header with your client_id and client_secret using the basic scheme
+  OAuth2:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: https://SERVER/oauth2/authorize
+    tokenUrl: https://SERVER/oauth2/token
+    scopes:
+      openid: OIDC Authentication scope
+
+definitions:
+  introspection_payload:
+    type: "object"
+    required:
+    - "token"
+    properties:
+      token:
+        type: "string"
+        description: "The string value of the token"
+      token_type_hint:
+        type: "string"
+        description: "A hint about the type of the token submitted for introspection."
+        enum:
+        - "access_token"
+        - "refresh_token"
+    xml:
+      name: "introspection_payload"
+  revocation_payload:
+    type: "object"
+    required:
+    - "token"
+    properties:
+      token:
+        type: "string"
+        description: "The string value of the token"
+      token_type_hint:
+        type: "string"
+        description: "A hint about the type of the token submitted for introspection."
+        enum:
+        - "refresh_token"
+        - "access_token"
+    xml:
+      name: "revocation_payload"
+  token_request_payload:
+    type: "object"
+    required:
+    - "grant_type"
+    properties:
+      grant_type:
+        type: "string"
+        description: "OAuth2 grant type"
+        enum:
+        - "authorization_code"
+        - "client_credentials"
+        - "refresh_token"
+      code:
+        type: "string"
+        description: "The authorization code received from the authorization serve. **REQUIRED ONLY if grant_type is 'authorization_code'"
+      redirect_uri:
+        type: "string"
+        description: "The redirect_uri for witch the code is delivered. **REQUIRED ONLY if grant_type is 'authorization_code'"
+      refresh_token:
+        type: "string"
+        description: "The refresh token issued to the client. **REQUIRED ONLY if grant_type is 'refresh_token'"
+      scope:
+        type: "string"
+        description: "The scope of the access request. **ONLY if grant_type is 'client_credentials (RECOMMENDED)'"
+    xml:
+      name: "token_request_payload"

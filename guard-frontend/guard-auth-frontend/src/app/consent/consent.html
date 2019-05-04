@@ -1,0 +1,61 @@
+<div class="modal fade modal-fs" id="modal-fs">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body height-100">
+        <div class="vertical-align text-center">
+          <div class="table-cell">
+            <div class="container">
+              <div class="col-md-8 offset-2">
+                <div class="card" id="ask-3">
+                  <div class="card-block">
+                    <ul class="list-unstyled list-info">
+                      <li>
+                        <div class="text-center">
+                          <img class="img-responsive mrg-left-auto mrg-btm-15" src="assets/images/logo/logo.png" alt="Guard" width="170">
+                          <b class="text-dark font-size-22">{{ 'consent' | translate }}</b>
+                          <p class="no-mrg-btm">{{client?.name}} {{'access_to_scopes_on_your_behalf' | translate}}</p>
+                          <span class="no-mrg-top">"{{client?.description}}"</span>
+                        </div>
+                      </li>
+                    </ul>
+                    <div class="mrg-top-30">
+                      <div id="consents-request" class="accordion border-less" role="tablist" aria-multiselectable="true">
+                        <div *ngFor="let scope of scopes" class="panel panel-default">
+                          <div class="panel-heading" role="tab">
+                            <h4 class="panel-title">
+                              <a class="collapse" data-toggle="collapse" data-parent="#consents-request" href="#{{scope.name}}">
+                                <span>{{scope.name}}</span>
+                                <i class="icon ti-arrow-circle-down"></i>
+                              </a>
+                            </h4>
+                          </div>
+                          <div id="{{scope.name}}" class="collapse panel-collapse show">
+                            <div class="panel-body">
+                              <p>
+                              {{getLocaleScopeDescription(scope)}}
+                              </p>
+                            </div>
+                          </div>
+                          <div class="panel-footer" [hidden]="consented.includes(scope.name)">
+                            <div class="toggle-checkbox toggle-primary checkbox-inline toggle-sm mrg-top-10">
+                              <input type="checkbox" name="{{scope.name}}-checkbox" id="{{scope.name}}-checkbox" checked [(ngModel)]="scope.consented">
+                              <label for="{{scope.name}}-checkbox"></label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button type="button" class="btn btn-primary" (click)="submit()">{{'submit' | translate}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<button id="openModal" [hidden]="true" data-toggle="modal" data-target="#modal-fs" class="btn btn-sm btn-primary">{{'trigger' | translate}}</button>

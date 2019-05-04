@@ -1,0 +1,63 @@
+<configuration debug="false">
+    <variable name="GUARD_LOG_DIR" value="./logs/" />
+    <appender name="Guard" class="com.demkada.guard.server.commons.utils.GuardAppender">
+        <file>${GUARD_LOG_DIR}/guard-server.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${GUARD_LOG_DIR}/archived/guard-server.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="com.demkada.guard.server.commons.utils.GuardLogLayout">
+                <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter"/>
+                <appendLineSeparator>true</appendLineSeparator>
+                <timestampFormat>yyyy-MM-dd' 'HH:mm:ss.SSS</timestampFormat>
+            </layout>
+        </encoder>
+    </appender>
+
+    <Logger name="io.netty" level="warn" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="com.demkada.guard.server.commons.model" level="warn" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="ACHILLES_DML_STATEMENT" level="warn" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="com.datastax" level="error" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="io.vertx" level="warn" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="com.hazelcast" level="info" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="info.archinnov" level="warn" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="fr.sii.ogham" level="warn" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="org.reflections" level="warn" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Logger name="org.thymeleaf" level="warn" additivity="false">
+        <appender-ref ref="Guard"/>
+    </Logger>
+
+    <Root level="debug">
+        <appender-ref ref="Guard"/>
+    </Root>
+</configuration>
