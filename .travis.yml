@@ -14,5 +14,4 @@ jdk:
   - oraclejdk8
 
 script:
-  mvn clean initialize -B
-  mvn package -B
+  mvn clean package -X
