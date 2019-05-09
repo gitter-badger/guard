@@ -124,10 +124,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>kmip4j</groupId>
-            <artifactId>kmip4j</artifactId>
-            <version>1.0</version>
+         <dependency>
+            <groupId>com.demkada</groupId>
+            <artifactId>kmip</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback.contrib</groupId>
@@ -234,27 +234,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>kmip4j</groupId>
-                            <artifactId>kmip4j</artifactId>
-                            <version>1.0</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                            <file>${basedir}/lib/kmip4j.jar</file>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.3</version>
                 <executions>
@@ -316,5 +295,16 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+         
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-demkada-maven</id>
+            <name>bintray</name>
+            <url>https://dl.bintray.com/demkada/maven/</url>
+        </repository>
+    </repositories>
 
 </project>
