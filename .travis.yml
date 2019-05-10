@@ -17,8 +17,8 @@ jdk:
 jobs:
   include:
     - stage: Build
-      script:  mvn clean clean deploy -B -s settings.xml
+      script:  mvn -X clean clean deploy -B -s settings.xml
 
     - stage: Release
       if: branch = master
-      script:  mvn clean clean deploy -B -s settings.xml
+      script:  mvn clean clean deploy -B -s settings.xml -Prelease
