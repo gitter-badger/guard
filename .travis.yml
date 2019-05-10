@@ -12,6 +12,7 @@ jdk:
 jobs:
   include:
     - stage: Build
+      if: branch != master
       script:  mvn clean clean install -B
 
     - stage: Release
