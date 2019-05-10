@@ -13,7 +13,7 @@ jobs:
   include:
     - stage: Build
       if: branch != master
-      script:  mvn clean deploy --settings settings.xml -Prelease
+      script:  mvn clean package
 
     - stage: Prepare release
       if: branch = master
