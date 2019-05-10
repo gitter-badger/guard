@@ -79,8 +79,8 @@
             <url>https://api.bintray.com/maven/demkada/maven/guard/;publish=1</url>
         </repository>
         <snapshotRepository>
-            <id>bintray-demkada-maven</id>
-            <name>demkada-maven</name>
+            <id>bintray-demkada-m2-sanpshot</id>
+            <name>demkada-m2-sanpsho</name>
             <url>https://bintray.com/demkada/m2-sanpshot/guard;publish=1</url>
         </snapshotRepository>
     </distributionManagement>
