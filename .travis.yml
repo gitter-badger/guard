@@ -18,13 +18,11 @@ cache:
 jdk:
   - openjdk8
 
-branches:
-
 jobs:
   include:
     - stage: Build
-      script:  mvn clean install -B -s settings.xml
+      script:  mvn clean clean deploy -B -s settings.xml
 
     - stage: Release
       if: branch = master
-      script:  mvn -B -s settings.xml -Dtag=guard-1.2 release:prepare -DreleaseVersion=1.2 -DdevelopmentVersion=2.0-SNAPSHOT
+      script:  mvn clean clean deploy -B -s settings.xml
