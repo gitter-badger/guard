@@ -76,12 +76,12 @@
         <repository>
             <id>bintray-demkada-maven</id>
             <name>demkada-maven</name>
-            <url>https://api.bintray.com/maven/demkada/maven/guard/;publish=1</url>
+            <url>https://api.bintray.com/maven/demkada/maven/guard/</url>
         </repository>
         <snapshotRepository>
             <id>bintray-demkada-m2-sanpshot</id>
             <name>demkada-m2-sanpshot</name>
-            <url>https://api.bintray.com/maven/demkada/m2-sanpshot/guard/;publish=1</url>
+            <url>https://api.bintray.com/maven/demkada/m2-sanpshot/guard/</url>
         </snapshotRepository>
     </distributionManagement>
 
