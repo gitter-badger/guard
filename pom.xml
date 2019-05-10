@@ -80,8 +80,8 @@
         </repository>
         <snapshotRepository>
             <id>bintray-demkada-m2-sanpshot</id>
-            <name>demkada-m2-sanpsho</name>
-            <url>https://api.bintray.com/maven/demkada/m2-sanpshot/guard;publish=1</url>
+            <name>demkada-m2-sanpshot</name>
+            <url>https://api.bintray.com/maven/demkada/m2-sanpshot/guard/;publish=1</url>
         </snapshotRepository>
     </distributionManagement>
 
