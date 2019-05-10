@@ -19,4 +19,4 @@ jdk:
   - openjdk8
 
 script:
-  mvn -s $A5129_IDD_SETTINGS clean install -B
+  mvn -s settings.xml clean install -B
