@@ -2,10 +2,6 @@ language: java
 
 sudo: false
 
-before_install:
-  - sudo add-apt-repository ppa:openjdk-r/ppa -y
-  - sudo apt-get update
-
 addons:
   apt:
     packages:
