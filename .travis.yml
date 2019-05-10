@@ -13,8 +13,12 @@ jobs:
   include:
     - stage: Build
       if: branch != master
-      script:  mvn clean clean install -B
+      script:  mvn clean deploy --settings ~/settings.xml -Prelease
+
+    - stage: Prepare release
+      if: branch = master
+      script:  mvn -Prelease release:prepare --settings ~/settings.xml
 
     - stage: Release
       if: branch = master
-      script:  mvn clean clean deploy -B -s settings.xml -Prelease
+      script:  mvn -Prelease release:perform --settings ~/settings.xml
