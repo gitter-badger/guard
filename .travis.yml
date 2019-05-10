@@ -2,15 +2,6 @@ language: java
 
 sudo: false
 
-before_install:
-  - sudo add-apt-repository ppa:openjdk-r/ppa -y
-  - sudo apt-get update
-
-addons:
-  apt:
-    packages:
-      - openjdk-8-jdk
-
 cache:
   directories:
     - $HOME/.m2
@@ -21,9 +12,8 @@ jdk:
 jobs:
   include:
     - stage: Build
-      if: branch != master
-      script:  mvn clean install -B
+      script:  mvn clean clean install -B
 
     - stage: Release
       if: branch = master
-      script:  mvn clean clean deploy -B -s settings.xml
+      script:  mvn clean clean deploy -B -s settings.xml -Prelease

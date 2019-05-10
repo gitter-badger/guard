@@ -6,9 +6,9 @@
             <password>${env.BINTRAY_API_KEY}</password>
         </server>
         <server>
-            <id>github</id>
-            <username>${env.GITHUB_USERNAME}</username>
-            <password>${env.GITHUB_TOKEN}</password>
+            <id>bintray-demkada-m2-sanpshot</id>
+            <username>${env.BINTRAY_USERNAME}</username>
+            <password>${env.BINTRAY_API_KEY}</password>
         </server>
     </servers>
 </settings>
