@@ -18,5 +18,12 @@ cache:
 jdk:
   - openjdk8
 
-script:
-  mvn -s settings.xml clean install -B
+jobs:
+  include:
+    - stage: Build
+      if: branch != master
+      script:  mvn clean install -B
+
+    - stage: Release
+      if: branch = master
+      script:  mvn clean clean deploy -B -s settings.xml
