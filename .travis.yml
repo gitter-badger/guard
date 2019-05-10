@@ -3,7 +3,7 @@ language: java
 sudo: false
 
 before_install:
-  - sudo add-apt-repository ppa:openjdk-r/ppa
+  - sudo add-apt-repository ppa:openjdk-r/ppa -y
   - sudo apt-get update
 
 addons:
@@ -19,4 +19,4 @@ jdk:
   - openjdk8
 
 script:
-  mvn clean package -B
+  mvn -s $A5129_IDD_SETTINGS clean install -B

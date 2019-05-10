@@ -25,12 +25,65 @@
         <slf4j.version>1.7.25</slf4j.version>
     </properties>
 
+    <description>
+        DEMKADA's Guard modern Identity and Access Management platform
+    </description>
+
+    <url>https://guard.demkada.com</url>
+
+    <inceptionYear>2019</inceptionYear>
+
+    <organization>
+        <name>DEMKADA</name>
+        <url>http://demkada.com</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <email>kad@demkada.com</email>
+            <name>Kad D.</name>
+            <url>https://github.com/kadary</url>
+            <id>kadary</id>
+        </developer>
+    </developers>
+
     <scm>
         <connection>scm:git:https://github.com/demkada/guard.git</connection>
         <developerConnection>scm:git:https://github.com/demkada/guard.git</developerConnection>
         <tag>HEAD</tag>
         <url>https://github.com/demkada/guard.git</url>
     </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/demkada/guard/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis</system>
+        <url>https://travis-ci.org/demkada/guard</url>
+    </ciManagement>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-demkada-maven</id>
+            <name>demkada-maven</name>
+            <url>https://api.bintray.com/maven/demkada/maven/guard/;publish=1</url>
+        </repository>
+        <snapshotRepository>
+            <id>bintray-demkada-maven</id>
+            <name>demkada-maven</name>
+            <url>https://bintray.com/demkada/m2-sanpshot/guard;publish=1</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
