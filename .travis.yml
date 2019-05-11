@@ -17,7 +17,7 @@ jdk:
 jobs:
   include:
     - stage: Build
-      script:  mvn -B clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+      script:  mvn -B clean org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:report package sonar:sonar
 
     - stage: Release
       if: branch = master AND env(RELEASE_VERSION) IS present AND env(DEV_VERSION) IS present AND type != push AND type != pull_request
