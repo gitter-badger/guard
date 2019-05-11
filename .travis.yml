@@ -17,4 +17,4 @@ jobs:
 
     - stage: Prepare release
       if: branch = master AND env(RELEASE_VERSION) AND env(DEV_VERSION)
-      script:  mvn -B -Prelease release:clean release:prepare release:perform --settings settings.xml
+      script:  git checkout "$TRAVIS_BRANCH" && mvn -B -Prelease release:clean release:prepare release:perform --settings settings.xml
