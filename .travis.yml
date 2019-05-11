@@ -17,7 +17,7 @@ jobs:
 
     - stage: Prepare release
       if: branch = master AND env(RELEASE) = true
-      script:  mvn -B -Prelease -DdryRun=true release:prepare --settings settings.xml
+      script:  mvn -B -Prelease release:prepare --settings settings.xml
 
     - stage: Perform Release
       if: branch = master AND env(RELEASE) = true
