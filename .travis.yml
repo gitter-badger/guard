@@ -5,6 +5,11 @@ sudo: false
 cache:
   directories:
     - $HOME/.m2
+    - $HOME/.sonar
+
+addons:
+  sonarcloud:
+    organization: "demkada"
 
 jdk:
   - openjdk8
@@ -12,9 +17,11 @@ jdk:
 jobs:
   include:
     - stage: Build
-      if: branch != master
-      script:  mvn -B clean package
+      script:  mvn -B clean install
 
-    - stage: Prepare release
+    - stage: Sonar
+      script:  mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:report sonar:sonar
+
+    - stage: Release
       if: branch = master AND env(RELEASE_VERSION) IS present AND env(DEV_VERSION) IS present AND type != push AND type != pull_request
-      script:  git checkout "$TRAVIS_BRANCH" && mvn -B -Prelease release:clean release:prepare release:perform --settings settings.xml
+      script:  git checkout "$TRAVIS_BRANCH" && mvn -B -Prelease -DskipTests=true release:clean release:prepare release:perform --settings settings.xml

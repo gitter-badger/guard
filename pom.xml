@@ -26,6 +26,7 @@
         <log4j.version>2.8.2</log4j.version>
         <slf4j.version>1.7.25</slf4j.version>
         <project.scm.id>github</project.scm.id>
+        <sonar.projectKey>demkada_guard</sonar.projectKey>
         <!--suppress UnresolvedMavenProperty -->
         <tag>guard-${env.RELEASE_VERSION}</tag>
         <!--suppress UnresolvedMavenProperty -->
@@ -140,6 +141,16 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.6.0.1398</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco</artifactId>
+                    <version>0.8.4</version>
+                </plugin>
+                <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.7.0</version>
                     <configuration>
@@ -214,5 +225,25 @@
             <url>https://dl.bintray.com/demkada/maven</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.12.1</version>
+                <configuration>
+                    <includeOpenIssues>false</includeOpenIssues>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>github-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>
