@@ -16,5 +16,5 @@ jobs:
       script:  mvn clean package
 
     - stage: Prepare release
-      if: branch = master AND env(RELEASE) = true
-      script:  mvn -B -Prelease release:prepare --settings settings.xml && mvn -B -Prelease release:perform --settings settings.xml
+      if: branch = master AND env(RELEASE_VERSION) AND env(DEV_VERSION)
+      script:  mvn -B -Prelease release:clean release:prepare release:perform -Dtag=guard-"${env.RELEASE_VERSION}" -DreleaseVersion="${env.RELEASE_VERSION}" -DdevelopmentVersion="${env.DEV_VERSION}" --settings settings.xml
