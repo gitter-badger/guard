@@ -77,7 +77,7 @@
         <repository>
             <id>bintray-demkada-maven</id>
             <name>demkada-maven</name>
-            <url>https://api.bintray.com/maven/demkada/maven/guard/</url>
+            <url>https://api.bintray.com/maven/demkada/maven/guard/;publish=1</url>
         </repository>
     </distributionManagement>
 
