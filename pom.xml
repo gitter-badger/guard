@@ -5,7 +5,7 @@
     <groupId>com.demkada</groupId>
     <artifactId>guard</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <modules>
         <module>guard-server</module>
     </modules>
@@ -52,7 +52,7 @@
     <scm>
         <connection>scm:git:https://github.com/demkada/guard.git</connection>
         <developerConnection>scm:git:https://github.com/demkada/guard.git</developerConnection>
-        <tag>guard-1.0.0</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/demkada/guard.git</url>
     </scm>
 
