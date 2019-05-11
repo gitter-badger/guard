@@ -15,6 +15,6 @@ jobs:
       if: branch != master
       script:  mvn -B clean package
 
-    - stage: Prepare release
+    - stage: Release
       if: branch = master AND env(RELEASE_VERSION) IS present AND env(DEV_VERSION) IS present AND type != push AND type != pull_request
       script:  git checkout "$TRAVIS_BRANCH" && mvn -B -Prelease release:clean release:prepare release:perform --settings settings.xml
