@@ -7,10 +7,6 @@ cache:
     - $HOME/.m2
     - $HOME/.sonar
 
-addons:
-  sonarcloud:
-    organization: "demkada"
-
 jdk:
   - openjdk8
 
