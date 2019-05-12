@@ -16,11 +16,12 @@ jdk:
 
 jobs:
   include:
-    - stage: Build
-      script:  mvn -B clean install
 
-    - stage: Sonar Scanner
+    - stage: Source code scan
       script:  cd guard-server && mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:report verify sonar:sonar
+
+    - stage: Build
+      script:  mvn -B clean install -DskipTests=true
 
     - stage: Release
       if: branch = master AND env(RELEASE_VERSION) IS present AND env(DEV_VERSION) IS present AND type != push AND type != pull_request
