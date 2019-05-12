@@ -6,7 +6,7 @@
     <artifactId>guard</artifactId>
     <packaging>pom</packaging>
     <version>1.0.2-SNAPSHOT</version>
-    
+
     <modules>
         <module>guard-server</module>
     </modules>
