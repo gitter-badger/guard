@@ -154,6 +154,7 @@ buildNumber.properties
 ### Vertx ###
 # Vertx cache directory
 .vertx
+.guard
 
 
 ### Guard ###
