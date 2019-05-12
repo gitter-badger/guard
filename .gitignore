@@ -154,11 +154,11 @@ buildNumber.properties
 ### Vertx ###
 # Vertx cache directory
 .vertx
-.guard
 
 
 ### Guard ###
 logs/
+.guard
 
 
 # End of https://www.gitignore.io/api/java,vertx,maven,intellij,angular
