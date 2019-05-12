@@ -114,6 +114,7 @@ fabric.properties
 
 # Sonarlint plugin
 .idea/sonarlint
+.sonar
 
 ### Java ###
 # Compiled class file
@@ -158,6 +159,7 @@ buildNumber.properties
 
 ### Guard ###
 logs/
+.guard
 
 
 # End of https://www.gitignore.io/api/java,vertx,maven,intellij,angular
